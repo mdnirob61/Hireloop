@@ -11,16 +11,26 @@ import {
     ArrowRight,
     BriefcaseBusiness,
 } from "lucide-react"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from "next/image"
 import { signUp } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export default function SignUpPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+    const router = useRouter();
 
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
@@ -28,24 +38,36 @@ export default function SignUpPage() {
     const [confirmPassword, setConfirmPassword] = useState("")
     const [agreeTerms, setAgreeTerms] = useState(false)
 
+    const [role, setRole] = useState<"seeker" | "recruiter" | "admin">("seeker")
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        e.preventDefault()
 
         if (password !== confirmPassword) {
             alert("Passwords do not match!")
             return
         }
+
         if (!agreeTerms) {
             alert("Please accept the Terms & Conditions.")
             return
         }
 
-        const { data: signUpResponse, error } = await signUp.email({
+        const { data, error } = await signUp.email({
             name,
             email,
             password,
+            role,
             callbackURL: "/",
-        });
+        })
+
+        if (error) {
+            console.log("Signup error:", error.message)
+            return
+        }
+
+        router.push("/")
+        // console.log(data)
     }
 
     return (
@@ -129,6 +151,36 @@ export default function SignUpPage() {
                                     className="h-12 border-white/10 bg-[#222228] pl-10 text-sm text-white placeholder:text-white/30 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/20"
                                 />
                             </div>
+                        </div>
+
+                        {/* User Type */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-white/80">
+                                I want to join as
+                            </label>
+
+                            <Select
+                                value={role}
+                                onValueChange={(value) => setRole(value === "seeker" || value === "recruiter" || value === "admin" ? value : "seeker")}
+                            >
+                                <SelectTrigger className="h-12 border-white/10 bg-[#222228] text-white focus:ring-indigo-500/20">
+                                    <SelectValue placeholder="Select account type" />
+                                </SelectTrigger>
+
+                                <SelectContent className="border-white/10 bg-[#222228] text-white">
+                                    <SelectItem value="seeker">
+                                        Job Seeker
+                                    </SelectItem>
+
+                                    <SelectItem value="recruiter">
+                                        Recruiter
+                                    </SelectItem>
+
+                                    <SelectItem value="admin">
+                                        Admin
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         {/* Password */}

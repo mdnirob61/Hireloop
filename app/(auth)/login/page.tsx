@@ -35,6 +35,10 @@ export default function SignInPage() {
             callbackURL: "/"
         })
 
+        if (error) {
+            console.error("Invalid email or password");
+            return;
+        }
         router.push('/')
     }
 

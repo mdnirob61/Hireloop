@@ -2,8 +2,9 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Menu, X } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/sheet"
 
 import { cn } from "@/lib/utils"
+import { authClient, useSession } from "@/lib/auth-client"
 
 const navLinks = [
   { href: "/jobs", label: "Browse Jobs" },
@@ -39,6 +41,18 @@ function Logo() {
 
 export function SiteNavbar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const { data: session } = useSession();
+
+  const user = session?.user;
+  // console.log(user)
+
+  const handleLogout = async () => {
+    await authClient.signOut()
+    router.refresh()
+    router.push('/login')
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-4 sm:px-6 sm:pt-6 lg:px-10">
@@ -68,30 +82,49 @@ export function SiteNavbar() {
         </div>
 
         {/* Desktop Buttons */}
-        <div className="hidden items-center gap-4 lg:flex">
-          <span className="h-6 w-px bg-white/25" />
+        {
+          user ?
+            <div className="hidden items-center gap-1 lg:flex">
+              <div className={buttonVariants({
+                variant: "ghost",
+                className:
+                  "h-13 rounded-xl px-6 font-(family-name:--font-manrope) text-lg font-semibold text-[#5c53fe] hover:bg-white/5 hover:text-white",
+              })}>
+                <Avatar>
+                  <AvatarImage src={user.image || undefined} />
+                  <AvatarFallback>{user?.name[0].toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <p className="font-bold text-[1.1rem]">Welcome, {user?.name}</p>
+              </div>
+              <Button onClick={handleLogout} variant={'destructive'}className={'px-6 py-4 font-semibold text-[1rem]'}>Logout</Button>
+            </div>
 
-          <Link
-            href="/login"
-            className={buttonVariants({
-              variant: "ghost",
-              className:
-                "h-13 rounded-xl px-6 font-(family-name:--font-manrope) text-lg font-semibold text-[#5c53fe] hover:bg-white/5 hover:text-white",
-            })}
-          >
-            Sign In
-          </Link>
+            : <div className="hidden items-center gap-4 lg:flex">
+              <span className="h-6 w-px bg-white/25" />
 
-          <Link
-            href="/register"
-            className={buttonVariants({
-              className:
-                "h-13 rounded-xl bg-[#5c53fe] px-6 font-(family-name:--font-instrument-sans) text-lg font-medium text-white hover:bg-[#6a62ff]",
-            })}
-          >
-            Get Started
-          </Link>
-        </div>
+              <Link
+                href="/login"
+                className={buttonVariants({
+                  variant: "ghost",
+                  className:
+                    "h-13 rounded-xl px-6 font-(family-name:--font-manrope) text-lg font-semibold text-[#5c53fe] hover:bg-white/5 hover:text-white",
+                })}
+              >
+                Sign In
+              </Link>
+
+              <Link
+                href="/register"
+                className={buttonVariants({
+                  className:
+                    "h-13 rounded-xl bg-[#5c53fe] px-6 font-(family-name:--font-instrument-sans) text-lg font-medium text-white hover:bg-[#6a62ff]",
+                })}
+              >
+                Get Started
+              </Link>
+            </div>
+        }
+
 
         {/* Mobile Menu */}
         <Sheet>
@@ -158,28 +191,58 @@ export function SiteNavbar() {
             </div>
 
             {/* Mobile Buttons */}
-            <div className="mt-auto flex flex-col gap-3 border-t border-white/10 p-5">
-              <SheetClose
-                render={<Link href="/login" />}
-                className={buttonVariants({
-                  variant: "outline",
-                  className:
-                    "h-12 w-full rounded-xl border-white/10 bg-transparent text-lg font-semibold text-[#8a83ff] hover:bg-white/5 hover:text-white",
-                })}
-              >
-                Sign In
-              </SheetClose>
+            {
+              user ?
+                <div className="mt-auto flex flex-col gap-4 border-t border-white/10 p-5">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={user.image || undefined} />
+                      <AvatarFallback>
+                        {user.name?.[0]?.toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
 
-              <SheetClose
-                render={<Link href="/register" />}
-                className={buttonVariants({
-                  className:
-                    "h-12 w-full rounded-xl bg-[#5c53fe] text-lg font-medium text-white hover:bg-[#6a62ff]",
-                })}
-              >
-                Get Started
-              </SheetClose>
-            </div>
+                    <p className="text-sm font-semibold text-white">
+                      Welcome, {user.name}
+                    </p>
+                  </div>
+
+                  <SheetClose
+                    render={
+                      <Button
+                        onClick={handleLogout}
+                        variant="destructive"
+                        className="w-full"
+                      >
+                        Logout
+                      </Button>
+                    }
+                  />
+                </div>
+                : <div className="mt-auto flex flex-col gap-3 border-t border-white/10 p-5">
+                  <SheetClose
+                    render={<Link href="/login" />}
+                    className={buttonVariants({
+                      variant: "outline",
+                      className:
+                        "h-12 w-full rounded-xl border-white/10 bg-transparent text-lg font-semibold text-[#8a83ff] hover:bg-white/5 hover:text-white",
+                    })}
+                  >
+                    Sign In
+                  </SheetClose>
+
+                  <SheetClose
+                    render={<Link href="/register" />}
+                    className={buttonVariants({
+                      className:
+                        "h-12 w-full rounded-xl bg-[#5c53fe] text-lg font-medium text-white hover:bg-[#6a62ff]",
+                    })}
+                  >
+                    Get Started
+                  </SheetClose>
+                </div>
+            }
+
           </SheetContent>
         </Sheet>
 
