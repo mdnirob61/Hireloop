@@ -46,10 +46,6 @@ export default function SignUpPage() {
             password,
             callbackURL: "/",
         });
-
-        console.log('sign up response', signUpResponse, error)
-        console.log({ name, email, password });
-
     }
 
     return (

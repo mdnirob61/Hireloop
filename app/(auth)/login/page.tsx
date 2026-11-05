@@ -15,16 +15,27 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from "next/image"
+import { signIn } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const router = useRouter()
 
-        console.log({ email, password })
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const { data: signInResponse, error } = await signIn.email({
+            email,
+            password,
+            rememberMe: true,
+            callbackURL: "/"
+        })
+
+        router.push('/')
     }
 
     return (
