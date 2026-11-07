@@ -6,9 +6,7 @@ import {
 } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
-import { SiteNavbar } from "@/components/site-navbar";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -47,7 +45,6 @@ export default function RootLayout({
     >
       <body>
         <div className="flex min-h-svh flex-col bg-[#010103] text-[#ededef]">
-          <SiteNavbar />
           <main className="flex-1">{children}</main>
         </div>
       </body>

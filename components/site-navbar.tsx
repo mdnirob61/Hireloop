@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet"
 
 import { cn } from "@/lib/utils"
-import { authClient, useSession } from "@/lib/auth-client"
+import { signOut, useSession } from "@/lib/auth-client"
 
 const navLinks = [
   { href: "/jobs", label: "Browse Jobs" },
@@ -49,7 +49,7 @@ export function SiteNavbar() {
   // console.log(user)
 
   const handleLogout = async () => {
-    await authClient.signOut()
+    await signOut()
     router.refresh()
     router.push('/login')
   }
