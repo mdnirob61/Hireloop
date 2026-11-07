@@ -20,11 +20,6 @@ import {
 import { cn } from "@/lib/utils"
 import { signOut, useSession } from "@/lib/auth-client"
 
-const navLinks = [
-  { href: "/jobs", label: "Browse Jobs" },
-  { href: "/companies", label: "Company" },
-  { href: "/pricing", label: "Pricing" },
-]
 
 function Logo() {
   return (
@@ -47,6 +42,13 @@ export function SiteNavbar() {
 
   const user = session?.user;
   // console.log(user)
+
+  const navLinks = [
+  { href: "/jobs", label: "Browse Jobs" },
+  { href: "/companies", label: "Company" },
+  { href: "/pricing", label: "Pricing" },
+  {href: `/dashboard/${session?.user?.role || 'seeker'}`, label: "Dashboard"}
+]
 
   const handleLogout = async () => {
     await signOut()

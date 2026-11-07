@@ -1,5 +1,5 @@
-"use client";
-import Link from "next/link";
+"use client"
+
 import {
     Sidebar,
     SidebarContent,
@@ -11,185 +11,73 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/lib/auth-client"
+import { Plus, PlusCircle } from "lucide-react"
 import {
-    LayoutDashboard,
-    Search,
-    FileText,
     Bookmark,
-    UserRound,
-    Settings,
-    PlusCircle,
-    BriefcaseBusiness,
-    Users,
+    Briefcase,
     Building2,
-    ChartNoAxesCombined,
-    ShieldCheck,
-    ClipboardList,
+    FileText,
+    LayoutDashboard,
+    Users,
+    Wallet,
+    Settings,
+    type LucideIcon,
 } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import Link from "next/link"
 
-interface MenuItem {
+type Role = "seeker" | "recruiter" | "admin"
+
+type MenuItem = {
     id: string
     name: string
     url: string
     icon: LucideIcon
 }
 
-type UserRole = "seeker" | "recruiter" | "admin"
-
-const menuItemsByRole: Record<UserRole, MenuItem[]> = {
+// Sidebar nav from the `HL 2.0/Sidebar` Figma component (per-role variants).
+const menuItemsByRole: Record<Role, MenuItem[]> = {
     seeker: [
-        {
-            id: "overview",
-            name: "Overview",
-            url: "/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            id: "browse-jobs",
-            name: "Browse Jobs",
-            url: "/dashboard/jobs",
-            icon: Search,
-        },
-        {
-            id: "applications",
-            name: "My Applications",
-            url: "/dashboard/applications",
-            icon: FileText,
-        },
-        {
-            id: "saved-jobs",
-            name: "Saved Jobs",
-            url: "/dashboard/saved-jobs",
-            icon: Bookmark,
-        },
-        {
-            id: "profile",
-            name: "My Profile",
-            url: "/dashboard/profile",
-            icon: UserRound,
-        },
-        {
-            id: "settings",
-            name: "Settings",
-            url: "/dashboard/settings",
-            icon: Settings,
-        },
+        { id: "dashboard", name: "Dashboard", url: "/dashboard/seeker", icon: LayoutDashboard },
+        { id: "jobs", name: "Jobs", url: "/dashboard/seeker/jobs", icon: Briefcase },
+        { id: "saved-jobs", name: "Saved Jobs", url: "/dashboard/seeker/saved-jobs", icon: Bookmark },
+        { id: "applications", name: "Applications", url: "/dashboard/seeker/applications", icon: FileText },
+        { id: "billing", name: "Billing", url: "/dashboard/seeker/billing", icon: Wallet },
+        { id: "settings", name: "Settings", url: "/dashboard/seeker/settings", icon: Settings },
     ],
-
     recruiter: [
-        {
-            id: "overview",
-            name: "Overview",
-            url: "/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            id: "post-job",
-            name: "Post a Job",
-            url: "/dashboard/post-job",
-            icon: PlusCircle,
-        },
-        {
-            id: "my-jobs",
-            name: "My Jobs",
-            url: "/dashboard/my-jobs",
-            icon: BriefcaseBusiness,
-        },
-        {
-            id: "applicants",
-            name: "Applicants",
-            url: "/dashboard/applicants",
-            icon: Users,
-        },
-        {
-            id: "company",
-            name: "Company Profile",
-            url: "/dashboard/company",
-            icon: Building2,
-        },
-        {
-            id: "settings",
-            name: "Settings",
-            url: "/dashboard/settings",
-            icon: Settings,
-        },
+        { id: "dashboard", name: "Dashboard", url: "/dashboard/recruiter", icon: LayoutDashboard },
+        { id: "my-company", name: "My Company", url: "/dashboard/recruiter/my-company", icon: Building2 },
+        { id: "manage-jobs", name: "Manage Jobs", url: "/dashboard/recruiter/jobs", icon: Briefcase },
+        { id: "add-job", name: "Add Job", url: "/dashboard/recruiter/jobs/new", icon: PlusCircle },
+        { id: "applications", name: "Applications", url: "/dashboard/recruiter/applications", icon: FileText },
+        { id: "settings", name: "Settings", url: "/dashboard/recruiter/settings", icon: Settings },
     ],
-
     admin: [
-        {
-            id: "overview",
-            name: "Overview",
-            url: "/dashboard",
-            icon: LayoutDashboard,
-        },
-        {
-            id: "users",
-            name: "Manage Users",
-            url: "/dashboard/users",
-            icon: Users,
-        },
-        {
-            id: "jobs",
-            name: "Manage Jobs",
-            url: "/dashboard/jobs",
-            icon: BriefcaseBusiness,
-        },
-        {
-            id: "companies",
-            name: "Manage Companies",
-            url: "/dashboard/companies",
-            icon: Building2,
-        },
-        {
-            id: "applications",
-            name: "Applications",
-            url: "/dashboard/applications",
-            icon: ClipboardList,
-        },
-        {
-            id: "analytics",
-            name: "Analytics",
-            url: "/dashboard/analytics",
-            icon: ChartNoAxesCombined,
-        },
-        {
-            id: "settings",
-            name: "Settings",
-            url: "/dashboard/settings",
-            icon: ShieldCheck,
-        },
+        { id: "dashboard", name: "Dashboard", url: "/dashboard/admin", icon: LayoutDashboard },
+        { id: "users", name: "Users", url: "/dashboard/admin/users", icon: Users },
+        { id: "companies", name: "Companies", url: "/dashboard/admin/companies", icon: Building2 },
+        { id: "jobs", name: "Jobs", url: "/dashboard/admin/jobs", icon: Briefcase },
+        { id: "payments", name: "Payments", url: "/dashboard/admin/payments", icon: Wallet },
+        { id: "settings", name: "Settings", url: "/dashboard/admin/settings", icon: Settings },
     ],
 }
 
-export function DashboardSideBar() {
-    const { data: session, isPending } = useSession()
 
-    if (isPending) {
-        return null
-    }
-
-    const userRole: UserRole =
-        session?.user?.role === "admin"
-            ? "admin"
-            : session?.user?.role === "recruiter"
-                ? "recruiter"
-                : "seeker"
-
-    const menuItems = menuItemsByRole[userRole]
+export function DashboardSidebar() {
+    const { data: session, isPending } = useSession();
+    const role: Role = session?.user?.role || 'seeker';
 
     return (
         <Sidebar>
             <SidebarHeader />
-
             <SidebarContent>
+                <SidebarGroup />
+                <SidebarGroup />
                 <SidebarGroup>
                     <SidebarMenu>
-                        {menuItems.map((item) => (
+                        {menuItemsByRole[role].map((item) => (
                             <SidebarMenuItem key={item.id}>
-                                <SidebarMenuButton
-                                    render={<Link href={item.url} />}
-                                >
+                                <SidebarMenuButton render={<Link href={item.url} />}>
                                     <item.icon />
                                     <span>{item.name}</span>
                                 </SidebarMenuButton>
@@ -198,7 +86,6 @@ export function DashboardSideBar() {
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
-
             <SidebarFooter />
         </Sidebar>
     )
