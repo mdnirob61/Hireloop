@@ -22,11 +22,27 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { createJob } from "@/lib/actions/jobs"
 
 const jobTypes = ["Full-time", "Part-time", "Contract", "Internship"]
 
 const inputClass =
     "h-10 border-white/5 bg-[#1d1d21] text-sm text-white placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
+
+export interface JobData {
+    title: string
+    companyName: string
+    category: string
+    jobType: string
+    remoteAllowed: boolean
+    location: string
+    applicationDeadline: string
+    minSalary: string
+    maxSalary: string
+    frequency: string
+    responsibilities: string
+    requirements: string
+}
 
 export default function NewJobPage() {
     const [jobType, setJobType] = useState("Full-time")
@@ -34,27 +50,30 @@ export default function NewJobPage() {
     const [remoteAllowed, setRemoteAllowed] = useState(true)
     const [frequency, setFrequency] = useState("per hour")
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         const formData = new FormData(e.currentTarget)
 
-        const jobData = {
-            title: formData.get("title"),
-            companyName: formData.get("companyName"),
+        const jobData: JobData = {
+            title: formData.get("title") as string,
+            companyName: formData.get("companyName") as string,
             category,
             jobType,
             remoteAllowed,
-            location: formData.get("location"),
-            applicationDeadline: formData.get("applicationDeadline"),
-            minSalary: formData.get("minSalary"),
-            maxSalary: formData.get("maxSalary"),
+            location: formData.get("location") as string,
+            applicationDeadline: formData.get("applicationDeadline") as string,
+            minSalary: formData.get("minSalary") as string,
+            maxSalary: formData.get("maxSalary") as string,
             frequency,
-            responsibilities: formData.get("responsibilities"),
-            requirements: formData.get("requirements"),
+            responsibilities: formData.get("responsibilities") as string,
+            requirements: formData.get("requirements") as string,
         }
 
-        console.log(jobData)
+        console.log(jobData);
+
+        const result = await createJob(jobData);
+        console.log('result', result);
     }
 
     return (
@@ -135,7 +154,7 @@ export default function NewJobPage() {
 
                                     <Select
                                         value={category}
-                                        onValueChange={setCategory}
+                                        onValueChange={(value) => setCategory(value ?? "")}
                                     >
                                         <SelectTrigger className={`w-full ${inputClass}`}>
                                             <SelectValue />
@@ -182,8 +201,8 @@ export default function NewJobPage() {
                                             type="button"
                                             onClick={() => setJobType(type)}
                                             className={`h-10 rounded-lg border text-xs transition ${jobType === type
-                                                    ? "border-indigo-500 bg-[#24232e] text-white"
-                                                    : "border-white/[0.04] bg-[#1d1d21] text-gray-400 hover:border-white/10"
+                                                ? "border-indigo-500 bg-[#24232e] text-white"
+                                                : "border-white/[0.04] bg-[#1d1d21] text-gray-400 hover:border-white/10"
                                                 }`}
                                         >
                                             {type}
@@ -322,7 +341,9 @@ export default function NewJobPage() {
 
                                     <Select
                                         value={frequency}
-                                        onValueChange={setFrequency}
+                                        onValueChange={(value) => {
+                                            if (value !== null) setFrequency(value)
+                                        }}
                                     >
                                         <SelectTrigger className={`w-full ${inputClass}`}>
                                             <SelectValue />
