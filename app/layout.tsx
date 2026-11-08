@@ -7,6 +7,7 @@ import {
 
 import "./globals.css"
 import { cn } from "@/lib/utils";
+import { ToastContainer } from "react-toastify";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -44,6 +45,7 @@ export default function RootLayout({
       )}
     >
       <body>
+        <ToastContainer></ToastContainer>
         <div className="flex min-h-svh flex-col bg-[#010103] text-[#ededef]">
           <main className="flex-1">{children}</main>
         </div>

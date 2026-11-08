@@ -30,6 +30,7 @@ const inputClass =
     "h-10 border-white/5 bg-[#1d1d21] text-sm text-white placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-indigo-500"
 
 export interface JobData {
+    _id: string
     title: string
     companyName: string
     category: string
@@ -58,6 +59,7 @@ export default function NewJobPage() {
         const formData = new FormData(e.currentTarget)
 
         const jobData: JobData = {
+            _id: formData.get("id") as string,
             title: formData.get("title") as string,
             companyName: formData.get("companyName") as string,
             category,
@@ -72,10 +74,7 @@ export default function NewJobPage() {
             requirements: formData.get("requirements") as string,
         }
 
-        console.log(jobData);
-
         const result = await createJob(jobData);
-        console.log('result', result);
     }
 
     return (
