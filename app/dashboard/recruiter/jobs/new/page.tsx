@@ -42,6 +42,8 @@ export interface JobData {
     frequency: string
     responsibilities: string
     requirements: string
+    applicants?: number
+    status?: "active" | "expired"
 }
 
 export default function NewJobPage() {
