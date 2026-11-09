@@ -3,22 +3,15 @@ import {
     Plus,
     MapPin,
     CalendarDays,
-    MoreHorizontal,
     BriefcaseBusiness,
-    Pencil,
     Eye,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { JobData } from "./new/page"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteDialogJob } from "@/app/components/DeleteDialogJob"
+import { EditDialogJob } from "@/app/components/EditDialogJob"
 
 export default async function ManageJobsPage() {
 
@@ -217,28 +210,12 @@ export default async function ManageJobsPage() {
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-5 py-4 text-right flex items-center gap-1">
+                                        <td className="px-5 py-4 flex items-center">
+                                            <Eye size={15} />
+
+                                            <EditDialogJob job={job}></EditDialogJob>
+
                                             <DeleteDialogJob job={job}></DeleteDialogJob>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger className="h-8 w-8 text-gray-400 hover:bg-white/5 hover:text-white">
-                                                    <MoreHorizontal size={18} />
-                                                </DropdownMenuTrigger>
-
-                                                <DropdownMenuContent
-                                                    align="end"
-                                                    className="border-white/10 bg-[#1d1d21] text-gray-200"
-                                                >
-                                                    <DropdownMenuItem>
-                                                        <Eye size={15} />
-                                                        View Job
-                                                    </DropdownMenuItem>
-
-                                                    <DropdownMenuItem>
-                                                        <Pencil size={15} />
-                                                        Edit Job
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
                                         </td>
 
                                     </tr>

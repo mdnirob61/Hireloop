@@ -23,6 +23,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { createJob } from "@/lib/actions/jobs"
+import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 
 const jobTypes = ["Full-time", "Part-time", "Contract", "Internship"]
 
@@ -53,6 +55,8 @@ export default function NewJobPage() {
     const [remoteAllowed, setRemoteAllowed] = useState(true)
     const [frequency, setFrequency] = useState("per hour")
 
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
@@ -75,6 +79,10 @@ export default function NewJobPage() {
         }
 
         const result = await createJob(jobData);
+        if (result.insertedId) {
+            toast.success('The job is created successfully.');
+            router.push('/dashboard/recruiter/jobs');
+        }
     }
 
     return (

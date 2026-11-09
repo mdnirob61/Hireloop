@@ -20,3 +20,15 @@ export const deleteJob = async (jobId: string) => {
     })
     return res.json()
 }
+
+
+export const updatedJob = async (jobId: string, updatedData: Partial<JobData>) => {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedData)
+    });
+    return res.json();
+}
