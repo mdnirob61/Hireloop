@@ -7,3 +7,21 @@ export const getJobs = async (query = ""): Promise<JobData[]> => {
 
     return res.json();
 }
+
+
+export const getJobById = async (jobId: string) => {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`);
+    return res.json()
+}
+
+
+export const applyToJob = async (data) => {
+    const res = await fetch(`${BASE_URL}/applications`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    return res.json()
+}

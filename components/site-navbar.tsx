@@ -53,7 +53,6 @@ export function SiteNavbar() {
   const handleLogout = async () => {
     await signOut()
     router.refresh()
-    router.push('/login')
   }
 
   return (

@@ -16,12 +16,15 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import Image from "next/image"
 import { signIn } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirectTo") ?? '/';
 
     const router = useRouter()
 
@@ -32,7 +35,7 @@ export default function SignInPage() {
             email,
             password,
             rememberMe: true,
-            callbackURL: "/"
+            callbackURL: redirectTo
         })
 
         if (error) {

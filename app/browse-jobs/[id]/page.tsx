@@ -1,20 +1,19 @@
-import { getJobs } from "@/lib/api/jobs";
+import JobHeaderCard from "@/app/components/JobHeaderCard";
+import { getJobById } from "@/lib/api/jobs";
 import {
     ArrowUpRight,
-    Bookmark,
     BriefcaseBusiness,
     Building2,
     CheckCircle2,
     Clock3,
     MapPin,
-    ShieldCheck,
     Wallet,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-interface JobData {
+export interface JobData1 {
     _id: string;
     title: string;
     companyName: string;
@@ -43,12 +42,11 @@ interface JobData {
     status: "active" | "expired";
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const JobDetailsPage = async ({ params, }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
 
-    const job = (await getJobs()).find((job) => job._id === id);
+    const job: JobData1 = await getJobById(id)
 
     if (!job) {
         notFound();
@@ -59,57 +57,7 @@ const JobDetailsPage = async ({ params, }: { params: Promise<{ id: string }> }) 
             <div className="mx-auto max-w-6xl">
 
                 {/* Job Header */}
-                <div className="mb-5 flex flex-col gap-5 rounded-xl border border-white/[0.07] bg-[#151518] p-5 sm:flex-row sm:items-center sm:justify-between">
-
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-[#202024]">
-                            {job.companyLogo ? (
-                                <Image
-                                    src={job.companyLogo}
-                                    alt={job.companyName}
-                                    height={200}
-                                    width={200}
-                                    className="h-full w-full object-cover"
-                                />
-                            ) : (
-                                <Building2 className="h-7 w-7 text-indigo-400" />
-                            )}
-                        </div>
-
-                        <div>
-                            <h1 className="text-xl font-semibold sm:text-2xl">
-                                {job.title}
-                            </h1>
-
-                            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-400">
-                                <span>{job.companyName}</span>
-                                <span>•</span>
-                                <span
-                                    className={`flex items-center gap-1 ${job.status === "active"
-                                        ? "text-green-400"
-                                        : "text-red-400"
-                                        }`}
-                                >
-                                    <ShieldCheck size={13} />
-                                    {job.status === "active" ? "Active Job" : "Expired"}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                        <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-[#202024] text-gray-300 transition hover:bg-white/10">
-                            <Bookmark size={17} />
-                        </button>
-
-                        <button
-                            disabled={job.status !== "active"}
-                            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            Apply Now
-                        </button>
-                    </div>
-                </div>
+                <JobHeaderCard job={job}></JobHeaderCard>
 
                 {/* Main Content */}
                 <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
