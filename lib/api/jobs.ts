@@ -25,3 +25,9 @@ export const applyToJob = async (data) => {
     });
     return res.json()
 }
+
+export const getApplyToJob = async (query = ""): Promise<JobData[]> => {
+    const res = await fetch(`${BASE_URL}/applications?${query}`);
+
+    return res.json();
+}
