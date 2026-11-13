@@ -31,3 +31,9 @@ export const getApplyToJob = async (query = ""): Promise<JobData[]> => {
 
     return res.json();
 }
+
+export const getApplyToJobCount = async (query = ""): Promise<{count: number}> => {
+    const res = await fetch(`${BASE_URL}/applications/count?${query}`);
+
+    return res.json();
+}

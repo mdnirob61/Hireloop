@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Bookmark, Building2, ShieldCheck } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import { applyToJob } from '@/lib/api/jobs';
+import { applyToJob, getApplyToJobCount } from '@/lib/api/jobs';
 import { toast } from 'react-toastify';
 
 const JobHeaderCard = ({ job }: { job: JobData1 }) => {
@@ -20,18 +20,26 @@ const JobHeaderCard = ({ job }: { job: JobData1 }) => {
             return;
         }
         else if (user.role === 'seeker') {
-            const application = {
-                jobId: job._id,
-                userId: user.id,
-                email: user.email,
-                jobTitle: job.title,
-                companyName: job.companyName
+            const countResult = await getApplyToJobCount(`applocandId=${user.id}`);
+            if (countResult.count >= 10) {
+                router.push('/payment');
+                return;
             }
 
-            const result = await applyToJob(application);
-            router.push('/browse-jobs')
-            toast.success('Applied Successfully')
-            console.log(result)
+            else {
+                const application = {
+                    jobId: job._id,
+                    userId: user.id,
+                    email: user.email,
+                    jobTitle: job.title,
+                    companyName: job.companyName
+                }
+
+                const result = await applyToJob(application);
+                router.push('/browse-jobs')
+                toast.success('Applied Successfully')
+                console.log(result)
+            }
         }
         else {
             console.log('Not the seeker');
