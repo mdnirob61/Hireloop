@@ -22,7 +22,7 @@ const JobHeaderCard = ({ job }: { job: JobData1 }) => {
         else if (user.role === 'seeker') {
             const countResult = await getApplyToJobCount(`applocandId=${user.id}`);
             if (countResult.count >= 10) {
-                router.push('/payment');
+                router.push('/checkout');
                 return;
             }
 
