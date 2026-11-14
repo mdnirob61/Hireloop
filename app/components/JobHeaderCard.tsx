@@ -7,6 +7,7 @@ import { useSession } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { applyToJob, getApplyToJobCount } from '@/lib/api/jobs';
 import { toast } from 'react-toastify';
+import { getUserPremiumById } from '@/lib/api/users';
 
 const JobHeaderCard = ({ job }: { job: JobData1 }) => {
     const router = useRouter()
@@ -20,8 +21,12 @@ const JobHeaderCard = ({ job }: { job: JobData1 }) => {
             return;
         }
         else if (user.role === 'seeker') {
+
+            const premiumResult = await getUserPremiumById(user.id);
+            console.log(premiumResult)
+
             const countResult = await getApplyToJobCount(`applocandId=${user.id}`);
-            if (countResult.count >= 10) {
+            if (!premiumResult.premium && countResult.count >= 2) {
                 router.push('/checkout');
                 return;
             }

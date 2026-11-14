@@ -6,7 +6,16 @@ import {
     Clock3,
 } from "lucide-react";
 
-const CheckoutPage = () => {
+const CheckoutPage = async ({ searchParams }: { searchParams: Promise<{ canceled?: string }> }) => {
+
+    const { canceled } = await searchParams;
+
+    if (canceled) {
+        console.log(
+            'Order canceled -- continue to shop around and check out when you\'re ready.'
+        )
+    }
+
     return (
         <div className="min-h-screen bg-[#09090b] text-white">
 
@@ -22,21 +31,7 @@ const CheckoutPage = () => {
                     </div>
 
                     <p className="mb-3 text-[10px] font-semibold tracking-wider text-gray-500">
-                        CHOOSE A CURRENCY
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <button className="flex items-center gap-2 rounded-md border border-gray-400 bg-[#17171b] px-3 py-3 text-xs font-medium">
-                            🇧🇩 <span>BDT 2,553.33</span>
-                        </button>
-
-                        <button className="flex items-center gap-2 rounded-md border border-white/10 px-3 py-3 text-xs text-gray-400">
-                            🇺🇸 <span>$20.00</span>
-                        </button>
-                    </div>
-
-                    <p className="mt-2 text-[9px] text-gray-600">
-                        1 USD = 127.6655 BDT
+                        ORDER SUMMERY
                     </p>
 
                     <div className="my-6 border-t border-white/10" />
@@ -52,8 +47,13 @@ const CheckoutPage = () => {
                         </div>
 
                         <p className="text-xs font-semibold">
-                            BDT 2,553.33
+                            $20.00
                         </p>
+                    </div>
+                    <div className="my-6 border-t border-white/10" />
+                    <div className="flex justify-between">
+                        <h2 className="text-sm font-medium">Total</h2>
+                        <p className="text-xs font-semibold">$20.00</p>
                     </div>
                 </div>
 
@@ -200,9 +200,14 @@ const CheckoutPage = () => {
                     </div>
 
                     {/* Pay Button */}
-                    <button className="mt-3 w-full rounded-md bg-[#0866df] py-3 text-xs font-semibold transition hover:bg-blue-600">
-                        Pay
-                    </button>
+                    <form action="/api/checkout_sessions" method="POST">
+                        <section>
+                            <button type="submit" role="link"
+                                className="mt-3 w-full rounded-md bg-[#0866df] py-3 text-xs font-semibold transition hover:bg-blue-600">
+                                Checkout $20.00
+                            </button>
+                        </section>
+                    </form>
                 </div>
             </div>
 
